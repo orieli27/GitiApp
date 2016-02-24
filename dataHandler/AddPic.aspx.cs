@@ -20,11 +20,11 @@ namespace dataHandler
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+           
             try
             {
                 if (!IsPostBack)
                 {
-                    string m=Context.User.Identity.GetUserName();
                     this.EnsureContainerExists();
                 }
                 this.RefreshGallery();
@@ -89,18 +89,36 @@ namespace dataHandler
                     secondery.Text.ToString(),
                     FileUp.PostedFile.ContentType,
                     FileUp.PostedFile.InputStream,
-                    ""
+                    Context.User.Identity.GetUserName()
                     );
                     CloudTable SubTable = getTable("SubCat");
                     saveCat(SubTable, new SubCatEntity(secondery.SelectedValue.ToString(), NameBox.Text));
                     CloudTable RatingTable = getTable("Rate");
                     CreateBlobRating(RatingTable, new RankEntity(blob_id, "total", 0));
+                    CloudTable userTable = getTable("Users");
+                    saveUserBlob(userTable, new UserEntity(Context.User.Identity.GetUserName(), blob_id));
                     // CreateBlobRating(RatingTable, new RankEntity(sound_id, "total", 0));// not useable for now
                 }
                 RefreshGallery();
             }
             else
                 status.Text = "No image file";
+        }
+        protected void saveUserBlob(CloudTable t,UserEntity u )
+        {
+            try
+            {
+                // Build insert operation.
+                TableOperation insertOperation = TableOperation.Insert(u);
+                // Execute the insert operation.
+                t.Execute(insertOperation);
+
+            }
+            catch (DataServiceRequestException ex)
+            {
+                status.Text = "Unable to connect to the table storage server. Please check that the service is running.<br>"
+                                   + ex.Message;
+            }
         }
         //if we give the option to save categories
         private void saveCat(CloudTable t, SubCatEntity catWords)
@@ -142,7 +160,7 @@ namespace dataHandler
                         {
                             Text = blob.Metadata["Text"],
                             Rating = blob.Metadata["Rating"],
-                            Sound = "http://127.0.0.1:10000/devstoreaccount1/gallery-sound/4fad5d16-75ef-4716-8c4c-57385afea003",
+                            Uri=blob.Uri
                         });
 
                         //bind to metadata
@@ -241,9 +259,40 @@ namespace dataHandler
 
         private void RefreshGallery()
         {
-            list.DataSource =
-            this.GetContainer("pic").ListBlobs(null, true, BlobListingDetails.All, new BlobRequestOptions(), null);
+            List<CloudBlockBlob> d = new List<CloudBlockBlob>();
+            // Retrieve the storage account from the connection string.
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                CloudConfigurationManager.GetSetting("Data"));
+
+            // Create the table client.
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+
+            // Create the CloudTable object that represents the "people" table.
+            CloudTable table = tableClient.GetTableReference("Users");
+
+            // Construct the query operation for all customer entities where PartitionKey="Smith".
+            TableQuery<UserEntity> query = new TableQuery<UserEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Context.User.Identity.GetUserName()));
+          
+
+
+            // Print the fields for each customer.
+            foreach (UserEntity entity in table.ExecuteQuery(query))
+            {
+                CloudBlockBlob blob = this.GetContainer("pic").GetBlockBlobReference(entity.RowKey);
+                if (blob != null)
+                {
+                    blob.FetchAttributes();
+                    d.Add(blob);
+                }
+                
+            }
+            list.DataSource = d;
             list.DataBind();
+            // RefreshGallery(NameBox.Text.ToString());
+           // status.Text = "Total Number of images with the name-" + NameBox.Text.ToString() + ",is[" + i + "].";
+            //list.DataSource =
+           this.GetContainer("pic").ListBlobs(null, true, BlobListingDetails.All, new BlobRequestOptions(), null);
+            //list.DataBind();
 
         }
 
@@ -362,6 +411,6 @@ namespace dataHandler
 
         public string Rating { get; set; }
 
-        public string Sound { get; set; }
+        public Uri Uri { get; set; }
     }
 }
