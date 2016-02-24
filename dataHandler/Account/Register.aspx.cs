@@ -6,9 +6,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Owin;
 using dataHandler.Models;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.Storage.Table;
+using dataHandler;
+
 
 namespace dataHandler.Account
 {
@@ -16,60 +15,24 @@ namespace dataHandler.Account
     {
         protected void CreateUser_Click(object sender, EventArgs e)
         {
-            try
+            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
+            var user = new ApplicationUser() { UserName = UserName.Text, Email = Email.Text };
+            IdentityResult result = manager.Create(user, Password.Text);
+            if (result.Succeeded)
             {
-                // Retrieve the storage account from the connection string.
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("Data"));
+                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                //string code = manager.GenerateEmailConfirmationToken(user.Id);
+                //string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
+                //manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
 
-                // Create the table client.
-                CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-
-                // Create the table if it doesn't exist.
-                CloudTable table = tableClient.GetTableReference("Users");
-                table.CreateIfNotExists();
-
-              
-                TableOperation retrieveOperation = TableOperation.Retrieve<UserEntity>(tb_UserName.Text.Substring(0,1), tb_UserName.Text);
-                TableResult retrievedResult = table.Execute(retrieveOperation);
-                UserEntity fetchedEntity = retrievedResult.Result as UserEntity;
-                if ( fetchedEntity != null)
-                {
-                    ScriptManager.RegisterStartupScript(this, GetType(), "error", "alert('User Name Exist Please Select a new one.');", true);
-                }
-
-                String admin="n";
-                if (cb_admin.Checked)
-                    admin = "y";
-                UserEntity newUser = createNewUser(tb_UserName.Text, Password.Text, Email.Text,admin);
-
-                // Create the TableOperation object that inserts the customer entity.
-                TableOperation insertOperation = TableOperation.Insert(newUser);
-
-                // Execute the insert operation.
-                table.Execute(insertOperation);
-
+                signInManager.SignIn(user, isPersistent: false, rememberBrowser: false);
+                IdentityHelper.RedirectToReturnUrl(Request.QueryString["ReturnUrl"], Response);
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.Message);
-                //System.Windows.Forms.MessageBox.Show("Error while register process... please try again", "Register Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                ErrorMessage.Text = result.Errors.FirstOrDefault();
             }
-        }
-
-        protected UserEntity createNewUser(String user,String pass,String email ,String admin)
-        {
-            UserEntity newUser = new UserEntity(user,pass,email,admin);
-            return newUser;
-        }
-
-        protected void checkUserName(object sender, EventArgs e)
-        {
-            int x = 9;
-        }
-
-        protected void tb_UserName_TextChanged(object sender, EventArgs e)
-        {
-            ;
         }
     }
 }

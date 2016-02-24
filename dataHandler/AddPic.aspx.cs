@@ -12,6 +12,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Microsoft.AspNet.Identity;
 
 namespace dataHandler
 {
@@ -23,6 +24,7 @@ namespace dataHandler
             {
                 if (!IsPostBack)
                 {
+                    string m=Context.User.Identity.GetUserName();
                     this.EnsureContainerExists();
                 }
                 this.RefreshGallery();

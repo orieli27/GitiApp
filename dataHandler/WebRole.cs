@@ -25,7 +25,7 @@ namespace dataHandler
             CloudTable catTable = getTable(tableClient, "Category");
             CloudTable RatingTable = getTable(tableClient, "Rate");
             CloudTable wbTable = getTable(tableClient, "SubCat");
-
+            CloudTable userTable = getTable(tableClient, "Users");
 
 
             return base.OnStart();
