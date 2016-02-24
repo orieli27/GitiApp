@@ -27,6 +27,7 @@ namespace dataHandler
                 {
                     this.EnsureContainerExists();
                 }
+                //this wil load all user pictures
                 this.RefreshGallery();
             }
             catch (System.Net.WebException we)
@@ -63,7 +64,7 @@ namespace dataHandler
                             status.Text = "Only Mp3 files are supported has of now.";
                         }
                         else
-                        {
+                        {  //not avilable at this time
                             sound_id = Guid.NewGuid().ToString();
                             this.SaveSound(
                                 sound_id,
@@ -80,8 +81,7 @@ namespace dataHandler
 
 
                     //insert to the table
-                    CloudTable wordTable = getTable("Word");
-                    saveWord(wordTable, new WordEntity(NameBox.Text, blob_id, sound_id));
+                    
                     this.SaveImage(
                     blob_id,
                     NameBox.Text,
@@ -91,11 +91,20 @@ namespace dataHandler
                     FileUp.PostedFile.InputStream,
                     Context.User.Identity.GetUserName()
                     );
+                    //saves word-blob index partition key is word text and row key is the blob id
+                    CloudTable wordTable = getTable("Word");
+                    saveWord(wordTable, new WordEntity(NameBox.Text, blob_id, sound_id));
+
+                    //saves index to sub category retrive all images under spacific category
                     CloudTable SubTable = getTable("SubCat");
                     saveCat(SubTable, new SubCatEntity(secondery.SelectedValue.ToString(), NameBox.Text));
+
+                    //saves rating details
                     CloudTable RatingTable = getTable("Rate");
                     CreateBlobRating(RatingTable, new RankEntity(blob_id, "total", 0));
-                    CloudTable userTable = getTable("Users");
+
+                    //saves user-blob index
+                    CloudTable userTable = getTable("UserBlobs");
                     saveUserBlob(userTable, new UserEntity(Context.User.Identity.GetUserName(), blob_id));
                     // CreateBlobRating(RatingTable, new RankEntity(sound_id, "total", 0));// not useable for now
                 }
@@ -138,6 +147,67 @@ namespace dataHandler
             }
 
         }
+
+        private void SaveImage(string id, string name, string mCat, string secondery, string contentType, Stream fiileStream, string owner)//, string catid, string lang, string owner, string contentType)
+        {
+            // Create a blob in container and upload image bytes to it
+            var blob = this.GetContainer("pic").GetBlockBlobReference(id);
+            blob.Properties.ContentType = contentType;
+            // Create some metadata for this image
+            blob.Metadata.Add("Id", id);
+            blob.Metadata.Add("Text", name);
+            blob.Metadata.Add("Category", String.IsNullOrEmpty(mCat) ? "General" : mCat);
+            blob.Metadata.Add("subCat", String.IsNullOrEmpty(secondery) ? "General" : secondery);
+            blob.Metadata.Add("Rating", "0.0");
+            blob.Metadata.Add("Downloads", "0");
+            blob.Metadata.Add("Tag", "NO");
+            blob.Metadata.Add("Owner", String.IsNullOrEmpty(owner) ? " ? " : owner);
+            blob.UploadFromStream(fiileStream);
+            blob.SetMetadata();
+
+            //send to queue 
+            //sendToQueue(name);
+        }
+        private void SaveSound(string id, string name, string mCat, string secondery, string contentType, Stream fiileStream, string owner)//, string catid, string lang, string owner, string contentType)
+        {
+            // Create a blob in container and upload image bytes to it
+            var blob = this.GetContainer("sound").GetBlockBlobReference(id);
+            blob.Properties.ContentType = contentType;
+            // Create some metadata for this image
+            blob.Metadata.Add("Id", id);
+            blob.Metadata.Add("Name", name);
+            blob.Metadata.Add("Category", String.IsNullOrEmpty(mCat) ? "General" : mCat);
+            //blob.Metadata.Add("Lang", String.IsNullOrEmpty(lang) ? "eu" : lang);
+            blob.Metadata.Add("subCat", String.IsNullOrEmpty(secondery) ? "General" : secondery);
+            blob.Metadata.Add("Tag", "NO");
+            blob.Metadata.Add("Owner", String.IsNullOrEmpty(owner) ? " ? " : owner);
+            blob.UploadFromStream(fiileStream);
+            blob.SetMetadata();
+
+            //send to queue 
+            //sendToQueue(name);
+        }
+        private void saveWord(CloudTable t, WordEntity word)
+        {
+            try
+            {
+                // Build insert operation.
+                TableOperation insertOperation = TableOperation.Insert(word);
+                // Execute the insert operation.
+                t.Execute(insertOperation);
+
+            }
+            catch (DataServiceRequestException ex)
+            {
+                status.Text = "Unable to connect to the table storage server. Please check that the service is running.<br>"
+                                   + ex.Message;
+            }
+        }
+        
+        
+        
+        
+        
         /// <summary>
         /// Cast out blob instance and bind it's metadata to metadata repeater
         /// </summary>
@@ -196,6 +266,7 @@ namespace dataHandler
                     CloudTable table = tableClient.GetTableReference("Word");
                     string a = blob.Metadata["Text"].ToString();
                     string b = blob.Metadata["Id"].ToString();
+
                     // Create a retrieve operation that expects a customer entity.
                     TableOperation retrieveOperation = TableOperation.Retrieve<WordEntity>(a, b);
 
@@ -268,7 +339,7 @@ namespace dataHandler
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
 
             // Create the CloudTable object that represents the "people" table.
-            CloudTable table = tableClient.GetTableReference("Users");
+            CloudTable table = tableClient.GetTableReference("UserBlobs");
 
             // Construct the query operation for all customer entities where PartitionKey="Smith".
             TableQuery<UserEntity> query = new TableQuery<UserEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Context.User.Identity.GetUserName()));
@@ -291,66 +362,12 @@ namespace dataHandler
             // RefreshGallery(NameBox.Text.ToString());
            // status.Text = "Total Number of images with the name-" + NameBox.Text.ToString() + ",is[" + i + "].";
             //list.DataSource =
-           this.GetContainer("pic").ListBlobs(null, true, BlobListingDetails.All, new BlobRequestOptions(), null);
+          // this.GetContainer("pic").ListBlobs(null, true, BlobListingDetails.All, new BlobRequestOptions(), null);
             //list.DataBind();
 
         }
 
-        private void SaveImage(string id, string name, string mCat, string secondery, string contentType, Stream fiileStream, string owner)//, string catid, string lang, string owner, string contentType)
-        {
-            // Create a blob in container and upload image bytes to it
-            var blob = this.GetContainer("pic").GetBlockBlobReference(id);
-            blob.Properties.ContentType = contentType;
-            // Create some metadata for this image
-            blob.Metadata.Add("Id", id);
-            blob.Metadata.Add("Text", name);
-            blob.Metadata.Add("Category", String.IsNullOrEmpty(mCat) ? "General" : mCat);
-            blob.Metadata.Add("subCat", String.IsNullOrEmpty(secondery) ? "General" : secondery);
-            blob.Metadata.Add("Rating", "0.0");
-            blob.Metadata.Add("Downloads", "0");
-            blob.Metadata.Add("Tag", "NO");
-            blob.Metadata.Add("Owner", String.IsNullOrEmpty(owner) ? " ? " : owner);
-            blob.UploadFromStream(fiileStream);
-            blob.SetMetadata();
-
-            //send to queue 
-            //sendToQueue(name);
-        }
-        private void SaveSound(string id, string name, string mCat, string secondery, string contentType, Stream fiileStream, string owner)//, string catid, string lang, string owner, string contentType)
-        {
-            // Create a blob in container and upload image bytes to it
-            var blob = this.GetContainer("sound").GetBlockBlobReference(id);
-            blob.Properties.ContentType = contentType;
-            // Create some metadata for this image
-            blob.Metadata.Add("Id", id);
-            blob.Metadata.Add("Name", name);
-            blob.Metadata.Add("Category", String.IsNullOrEmpty(mCat) ? "General" : mCat);
-            //blob.Metadata.Add("Lang", String.IsNullOrEmpty(lang) ? "eu" : lang);
-            blob.Metadata.Add("subCat", String.IsNullOrEmpty(secondery) ? "General" : secondery);
-            blob.Metadata.Add("Tag", "NO");
-            blob.Metadata.Add("Owner", String.IsNullOrEmpty(owner) ? " ? " : owner);
-            blob.UploadFromStream(fiileStream);
-            blob.SetMetadata();
-
-            //send to queue 
-            //sendToQueue(name);
-        }
-        private void saveWord(CloudTable t, WordEntity word)
-        {
-            try
-            {
-                // Build insert operation.
-                TableOperation insertOperation = TableOperation.Insert(word);
-                // Execute the insert operation.
-                t.Execute(insertOperation);
-
-            }
-            catch (DataServiceRequestException ex)
-            {
-                status.Text = "Unable to connect to the table storage server. Please check that the service is running.<br>"
-                                   + ex.Message;
-            }
-        }
+     
 
         private void CreateBlobRating(CloudTable t, RankEntity rate)
         {
