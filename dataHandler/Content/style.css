@@ -1,0 +1,13 @@
+﻿
+.clickable:hover {
+    cursor: pointer;
+}
+
+.steps .step {
+    color: #34314c;
+}
+
+.steps .step.selected {
+    color: #004e66;
+    color: white;
+}
