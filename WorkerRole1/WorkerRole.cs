@@ -24,14 +24,14 @@ namespace WorkerRole1
     {
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
-
+        bool items = true;
         public override void Run()
         {
             Trace.TraceInformation("WorkerRole1 is running");
 
             try
             {
-                
+                this.EnsureContainerExists();
                 this.RunAsync(this.cancellationTokenSource.Token).Wait();
             }
             finally
@@ -43,7 +43,7 @@ namespace WorkerRole1
         public override bool OnStart()
         {
             // Set the maximum number of concurrent connections
-            ServicePointManager.DefaultConnectionLimit = 12;
+            ServicePointManager.DefaultConnectionLimit = 3;
 
             // For information on handling configuration changes
             // see the MSDN topic at http://go.microsoft.com/fwlink/?LinkId=166357.
@@ -72,9 +72,9 @@ namespace WorkerRole1
             while (!cancellationToken.IsCancellationRequested)
             {
                 Trace.TraceInformation("Working");
-              //TestTaggingTagging1().Wait();
+              //TestTaggingTagging1();
              
-                await Task.Delay(10000);
+                await Task.Delay(1000);
             } 
         }
      
@@ -103,13 +103,13 @@ namespace WorkerRole1
 
 
 
-        async public Task TestTaggingTagging1()
+       public void TestTaggingTagging1()
         {
             var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("AzureData"));
             CloudQueueClient queueClient = account.CreateCloudQueueClient();
             CloudQueue messageQueue = queueClient.GetQueueReference("urlqueue");
-             messageQueue.CreateIfNotExists();
-            messageQueue.FetchAttributes();
+            messageQueue.CreateIfNotExists();
+           messageQueue.FetchAttributesAsync ();
 
             // Retrieve the cached approximate message count.
             int? cachedMessageCount = messageQueue.ApproximateMessageCount;
@@ -150,10 +150,16 @@ namespace WorkerRole1
                         Console.WriteLine(ex.ToString());
                     }
                     // Add "Assert" here. Ref: http://www.nunit.org/index.php?p=assertions&r=2.6.4
+
+                    //Process the message in less than 30 seconds, and then delete the message
+                    messageQueue.DeleteMessage(retrievedMessage);
                 }
+
             }
-            else
-                this.OnStop();
+            //else
+            //    this.runCompleteEvent.Set();
+          Task.Delay(1000);
+          this.cancellationTokenSource.Cancel();
         }
         private void EnsureContainerExists()
         {
@@ -171,8 +177,7 @@ namespace WorkerRole1
             // Get a handle on account, create a blob service client and get container proxy
 
             var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("AzureData"));
-            var client = account.CreateCloudBlobClient();
-          
+            var client = account.CreateCloudBlobClient();        
                 return client.GetContainerReference(RoleEnvironment.GetConfigurationSettingValue("ContainerName") + "-photo1");
          
         }

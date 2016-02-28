@@ -14,6 +14,7 @@
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="AzureData" value="DefaultEndpointsProtocol=https;AccountName=gitiapp;AccountKey=NlD+Pm7f/TSgzY/F30pSLhKgkCtnA7TPHVqphjiCug1U9TQmAGn3SkrxeEv/KTJ49z9br165QGfDJ76MDpWGkg==" />
+      <Setting name="ContainerName" value="gallery" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>
