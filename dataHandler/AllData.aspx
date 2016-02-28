@@ -150,8 +150,8 @@
                    
                     <br />
 
-                    <asp:LinkButton ID="add" Style="float: right" runat="server" >
-                         <span aria-hidden="true" class="glyphicon glyphicon-floppy-save"></span>
+                    <asp:LinkButton ID="add" Style="float: right" runat="server" OnCommand="add_Command" CommandArgument='<%# Eval("BlobName") %>'>
+                         <span aria-hidden="true"  class="glyphicon glyphicon-floppy-save"></span>
                     </asp:LinkButton>
                     <asp:LinkButton ID="ban" Style="float: right" runat="server" >
                          <span aria-hidden="true" class="glyphicon glyphicon-ban-circle"></span>

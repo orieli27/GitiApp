@@ -13,6 +13,8 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Microsoft.AspNet.Identity;
+using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage.Queue;
 
 namespace dataHandler
 {
@@ -89,7 +91,9 @@ namespace dataHandler
                     secondery.Text.ToString(),
                     FileUp.PostedFile.ContentType,
                     FileUp.PostedFile.InputStream,
-                    Context.User.Identity.GetUserName()
+                    Context.User.Identity.GetUserName(),
+                    rd_check.Checked
+                    
                     );
                     //saves word-blob index partition key is word text and row key is the blob id
                     CloudTable wordTable = getTable("Word");
@@ -148,7 +152,7 @@ namespace dataHandler
 
         }
 
-        private void SaveImage(string id, string name, string mCat, string secondery, string contentType, Stream fiileStream, string owner)//, string catid, string lang, string owner, string contentType)
+        private void SaveImage(string id, string name, string mCat, string secondery, string contentType, Stream fiileStream, string owner,bool check)//, string catid, string lang, string owner, string contentType)
         {
             // Create a blob in container and upload image bytes to it
             var blob = this.GetContainer("pic").GetBlockBlobReference(id);
@@ -161,12 +165,25 @@ namespace dataHandler
             blob.Metadata.Add("Rating", "0.0");
             blob.Metadata.Add("Downloads", "0");
             blob.Metadata.Add("Tag", "NO");
+            blob.Metadata.Add("Share", (check) ? "public" : "private");
             blob.Metadata.Add("Owner", String.IsNullOrEmpty(owner) ? " ? " : owner);
             blob.UploadFromStream(fiileStream);
             blob.SetMetadata();
-
+            if(check)
             //send to queue 
-            //sendToQueue(name);
+            sendToQueue(id);
+        }
+        protected void sendToQueue(string id)
+        {
+             var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("AzureData"));
+            CloudQueueClient queueClient = account.CreateCloudQueueClient();
+            CloudQueue messageQueue = queueClient.GetQueueReference("urlqueue");
+            messageQueue.CreateIfNotExists();
+          
+            // Create a message and add it to the queue.
+            CloudQueueMessage message = new CloudQueueMessage(id);//GetContainer("pic").GetBlockBlobReference(id).Uri.ToString());
+            messageQueue.AddMessage(message);
+
         }
         private void SaveSound(string id, string name, string mCat, string secondery, string contentType, Stream fiileStream, string owner)//, string catid, string lang, string owner, string contentType)
         {
@@ -257,7 +274,7 @@ namespace dataHandler
                     var blob = this.GetContainer("pic").GetBlockBlobReference(blobUri);
                     blob.FetchAttributes();
                     CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                    CloudConfigurationManager.GetSetting("Data"));
+                    CloudConfigurationManager.GetSetting("AzureData"));
 
                     // Create the table client.
                     CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
@@ -266,29 +283,51 @@ namespace dataHandler
                     CloudTable table = tableClient.GetTableReference("Word");
                     string a = blob.Metadata["Text"].ToString();
                     string b = blob.Metadata["Id"].ToString();
+                    string sub = blob.Metadata["SubCat"].ToString();
+                    string owner = Context.User.Identity.GetUserName();
 
                     // Create a retrieve operation that expects a customer entity.
-                    TableOperation retrieveOperation = TableOperation.Retrieve<WordEntity>(a, b);
+                   // TableOperation retrieveOperation = TableOperation.Retrieve<WordEntity>(a, b);
 
-                    // Execute the operation.
-                    TableResult retrievedResult = table.Execute(retrieveOperation);
+                   // // Execute the operation.
+                   // TableResult retrievedResult = table.Execute(retrieveOperation);
+                   // WordEntity deleteEntity = (WordEntity)retrievedResult.Result;
+                   // // Create the Delete TableOperation.
+                   // if (deleteEntity != null)
+                   // {
+                   //     TableOperation deleteOperation = TableOperation.Delete(deleteEntity);
+                   //     // Execute the operation.
+                   //     table.Execute(deleteOperation);
+                   // }
 
-                    // .
-                    WordEntity deleteEntity = (WordEntity)retrievedResult.Result;
+                   // // Create a retrieve operation that expects a customer entity.
+                   // TableOperation retrieveOperation1 = TableOperation.Retrieve<SubCatEntity>(sub, a);
 
+                   // // Execute the operation.
+                   // TableResult retrievedResult1 = table.Execute(retrieveOperation1);
+                   //SubCatEntity deleteEntity1 = (SubCatEntity)retrievedResult1.Result;
+                   // // Create the Delete TableOperation.
+                   // if (deleteEntity1 != null)
+                   // {
+                   //     TableOperation deleteOperation1 = TableOperation.Delete(deleteEntity1);
+                   //     // Execute the operation.
+                   //     table.Execute(deleteOperation1);
+                   // }
+
+                   // // Create a retrieve operation that expects a customer entity.
+                    TableOperation retrieveOperation2 = TableOperation.Retrieve<UserEntity>(owner, b);
+
+                   // // Execute the operation.
+                    TableResult retrievedResult2 = table.Execute(retrieveOperation2);
+                    UserEntity deleteEntity2 = (UserEntity)retrievedResult2.Result;
                     // Create the Delete TableOperation.
-                    if (deleteEntity != null)
+                    if (deleteEntity2 != null)
                     {
-                        TableOperation deleteOperation = TableOperation.Delete(deleteEntity);
-
+                        TableOperation deleteOperation2 = TableOperation.Delete(deleteEntity2);
                         // Execute the operation.
-                        table.Execute(deleteOperation);
-
+                        table.Execute(deleteOperation2);
                     }
-
-
-
-                    bool result = blob.DeleteIfExists();
+                   // bool result = blob.DeleteIfExists();
                     status.Text = "";
                 }
             }
@@ -298,6 +337,11 @@ namespace dataHandler
             }
             catch (Exception) { }
             RefreshGallery();
+        }
+        protected void delRow(CloudTable t,string p_key, string R_key)
+        {
+
+
         }
         /// <param name="e"></param>
         protected void OnListItemDeleting(object sender, EventArgs e)
@@ -319,7 +363,7 @@ namespace dataHandler
         {
             // Get a handle on account, create a blob service client and get container proxy
 
-            var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("Data"));
+            var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("AzureData"));
             var client = account.CreateCloudBlobClient();
             if (st.Equals("pic"))
                 return client.GetContainerReference(RoleEnvironment.GetConfigurationSettingValue("ContainerName") + "-photo1");
@@ -333,7 +377,7 @@ namespace dataHandler
             List<CloudBlockBlob> d = new List<CloudBlockBlob>();
             // Retrieve the storage account from the connection string.
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                CloudConfigurationManager.GetSetting("Data"));
+                CloudConfigurationManager.GetSetting("AzureData"));
 
             // Create the table client.
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
@@ -391,7 +435,7 @@ namespace dataHandler
         protected CloudTable getTable(string table)
         {
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                                           CloudConfigurationManager.GetSetting("Data"));
+                                           CloudConfigurationManager.GetSetting("AzureData"));
 
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
             return tableClient.GetTableReference(table);
@@ -401,7 +445,7 @@ namespace dataHandler
             secondery.Items.Clear();
             string mCat = mainCategory.SelectedItem.Value;
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                                              CloudConfigurationManager.GetSetting("Data"));
+                                              CloudConfigurationManager.GetSetting("AzureData"));
 
 
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();

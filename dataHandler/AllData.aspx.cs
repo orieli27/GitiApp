@@ -5,11 +5,12 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
+using System.Data.Services.Client;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
+using Microsoft.AspNet.Identity;
 namespace dataHandler
 {
     public partial class WebForm1 : System.Web.UI.Page
@@ -34,7 +35,7 @@ namespace dataHandler
 
             // Retrieve the storage account from the connection string.
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                CloudConfigurationManager.GetSetting("Data"));
+                CloudConfigurationManager.GetSetting("AzureData"));
 
             // Create the table client.
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
@@ -76,7 +77,7 @@ namespace dataHandler
             secondery.Items.Clear();
             string mCat = mainCategory.SelectedItem.Value;
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                                              CloudConfigurationManager.GetSetting("Data"));
+                                              CloudConfigurationManager.GetSetting("AzureData"));
 
 
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
@@ -120,7 +121,7 @@ namespace dataHandler
             double res = 5.0;
             // Retrieve the storage account from the connection string.
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                CloudConfigurationManager.GetSetting("Data"));
+                CloudConfigurationManager.GetSetting("AzureData"));
 
 
 
@@ -131,7 +132,7 @@ namespace dataHandler
         {
             List<Detailes> d = new List<Detailes>();
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-               CloudConfigurationManager.GetSetting("Data"));
+               CloudConfigurationManager.GetSetting("AzureData"));
 
             // Create the table client.
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
@@ -148,8 +149,8 @@ namespace dataHandler
                 d.Add(new Detailes()
                 {
                     PicUrl = getUrl(entity.RowKey),
-                    //SndUrl=;
-                    Rating = getRating(entity.RowKey),
+                    BlobName = getName(entity.RowKey),
+                     Rating = getRating(entity.RowKey),
                     Text = word
                 });
             }
@@ -159,7 +160,7 @@ namespace dataHandler
         {
             // Get a handle on account, create a blob service client and get container proxy
 
-            var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("Data"));
+            var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("AzureData"));
             var client = account.CreateCloudBlobClient();
             return client.GetContainerReference(RoleEnvironment.GetConfigurationSettingValue("ContainerName") + "-photo1");
         }
@@ -185,7 +186,7 @@ namespace dataHandler
             List<Detailes> d = new List<Detailes>();
             // Retrieve the storage account from the connection string.
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                CloudConfigurationManager.GetSetting("Data"));
+                CloudConfigurationManager.GetSetting("AzureData"));
 
             // Create the table client.
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
@@ -205,7 +206,7 @@ namespace dataHandler
                 d.Add(new Detailes()
                 {
                     PicUrl = getUrl(entity.RowKey),
-                    //SndUrl=;
+                    BlobName = getName(entity.RowKey),
                     Rating = getRating(entity.RowKey),
                     Text = NameBox.Text.ToString()
                 });
@@ -226,6 +227,11 @@ namespace dataHandler
             return GetContainer("pic").GetBlockBlobReference(blob).Uri;
 
         }
+        public string getName(string blob)
+        {
+            return GetContainer("pic").GetBlockBlobReference(blob).Name;
+
+        }
         public string getRating(string blob)
         {
             CloudBlockBlob b = GetContainer("pic").GetBlockBlobReference(blob);
@@ -233,11 +239,12 @@ namespace dataHandler
             return b.Metadata["Rating"];
 
         }
+
         private CloudBlobContainer GetContainer(String st)
         {
             // Get a handle on account, create a blob service client and get container proxy
 
-            var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("Data"));
+            var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("AzureData"));
             var client = account.CreateCloudBlobClient();
             if (st.Equals("pic"))
                 return client.GetContainerReference(RoleEnvironment.GetConfigurationSettingValue("ContainerName") + "-photo1");
@@ -254,7 +261,7 @@ namespace dataHandler
 
             // Retrieve the storage account from the connection string.
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                CloudConfigurationManager.GetSetting("Data"));
+                CloudConfigurationManager.GetSetting("AzureData"));
 
             // Create the table client.
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
@@ -279,6 +286,36 @@ namespace dataHandler
             list.DataSource = collected;
             list.DataBind();
         }
+
+        protected void add_Command(object sender, CommandEventArgs e)
+        {
+
+            CloudTable userTable = getTable("UserBlobs");
+           
+            try
+            {
+                
+                // Build insert operation.
+                TableOperation insertOperation = TableOperation.Insert(new UserEntity(Context.User.Identity.GetUserName(),e.CommandArgument.ToString()));
+                // Execute the insert operation.
+                userTable.Execute(insertOperation);
+
+            }
+            catch (DataServiceRequestException ex)
+            {
+                status.Text = "Unable to connect to the table storage server. Please check that the service is running.<br>"
+                                   + ex.Message;
+            }
+            string f= null;
+        }
+        protected CloudTable getTable(string table)
+        {
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                                           CloudConfigurationManager.GetSetting("AzureData"));
+
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+            return tableClient.GetTableReference(table);
+        }
     }
     class Detailes
     {
@@ -289,6 +326,8 @@ namespace dataHandler
         public string Text { get; set; }
 
         public string Rating { get; set; }
+
+        public string BlobName { get; set; }
 
     }
 }

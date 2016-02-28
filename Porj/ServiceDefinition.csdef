@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="Porj" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2015-04.2.6">
-  <WebRole name="dataHandler" vmsize="Small">
+  <WebRole name="dataHandler" vmsize="ExtraSmall">
     <Sites>
       <Site name="Web">
         <Bindings>
@@ -12,6 +12,7 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
       <Setting name="Data" />
       <Setting name="ContainerName" />
+      <Setting name="AzureData" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
@@ -20,6 +21,7 @@
   <WorkerRole name="WorkerRole1" vmsize="ExtraSmall">
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="AzureData" />
     </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

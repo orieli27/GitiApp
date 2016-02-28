@@ -123,7 +123,7 @@
             <asp:FileUpload ID="FileUp1" runat="server" />
         </div>
         <div class="form-group">
-  <input type="checkbox" data-style="btn-group-justified">
+         <input type="checkbox" id="rd_check" data-style="btn-group-justified" runat="server">
     </div>
         <%--<asp:Button ID="UploagSnd" runat="server" Text="Upload Sound" OnClick="UploagSnd_Click" CssClass="myButton" />--%>
         <br />       
