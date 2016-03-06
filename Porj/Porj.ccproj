@@ -45,6 +45,14 @@
       <RoleName>dataHandler</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
+    <ProjectReference Include="..\Resizer\Resizer.csproj">
+      <Name>Resizer</Name>
+      <Project>{a9097ad0-bf70-4d39-be73-4590d0bbd410}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Resizer</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\WorkerRole1\WorkerRole1.csproj">
       <Name>WorkerRole1</Name>
       <Project>{202b812b-6b39-44d1-abf8-92447af6aba6}</Project>
@@ -56,12 +64,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dataHandlerContent\" />
+    <Folder Include="ResizerContent\" />
     <Folder Include="TaggerContent\" />
     <Folder Include="UserRoleContent\" />
     <Folder Include="WorkerRole1Content\" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="dataHandlerContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="ResizerContent\diagnostics.wadcfgx" />
     <DiagnosticsConfiguration Include="TaggerContent\diagnostics.wadcfgx" />
     <DiagnosticsConfiguration Include="UserRoleContent\diagnostics.wadcfgx" />
     <DiagnosticsConfiguration Include="WorkerRole1Content\diagnostics.wadcfgx" />
