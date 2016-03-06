@@ -80,17 +80,37 @@
             width: auto;
         }
 
-        .item {
+        .flex-item {
+            margin: 10px 40px 30px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .item-image {
+            width: 200px;
+            height: 150px;
+            background-size: cover;
+            border-radius: 5px;
+        }
+
+        .item-title {
+            color: #383838;
+            font-weight: bold;
+        }
+
+        /*.item {
             width: 20em;
             height: 20em;
             font-size: smaller;
             font-weight: bold;
             border: double;
-        }
+        }*/
 
-            .item div {
-                background-color: #00ffff;
-            }
+        .item div {
+            background-color: #00ffff;
+        }
 
         /*span {
             padding: 2em;
@@ -135,8 +155,9 @@
                             </asp:DropDownList>
                         </div>
                         <div class="form-group">
-                            <asp:DropDownList ID="secondery" OnSelectedIndexChanged
-                                ="secondery_SelectedIndexChanged1" AutoPostBack="True" CssClass="drop form-control" runat="server"></asp:DropDownList>
+                            <asp:DropDownList ID="secondery" OnSelectedIndexChanged="secondery_SelectedIndexChanged1"
+                                AutoPostBack="True" CssClass="drop form-control" runat="server">
+                            </asp:DropDownList>
                         </div>
                     </div>
                 </div>
@@ -172,25 +193,26 @@
                             <h4 style="color: #e1eef6;">No Items where found matching your cratiria</h4>
                         </EmptyDataTemplate>
                         <ItemTemplate>
-                            <div class="flex-item" style="margin: 10px; padding: 20px; background-color: white; border-radius: 10px; display: inline-block;">
+                            <div class="flex-item">
                                 <div class="item-wrapper">
-                                    <asp:LinkButton ID="SaveToGallery"
-                                        OnClientClick="return confirm('Add image to your gallery?');"
-                                        CommandName="AddToGallery"
-                                        CommandArgument='<%# Eval("BlobName") %>'
-                                        OnCommand="add_Command"
-                                        Style="float: right"
-                                        runat="server">
+                                    <div>
+                                        <asp:LinkButton ID="SaveToGallery"
+                                            OnClientClick="return confirm('Add image to your gallery?');"
+                                            CommandName="AddToGallery"
+                                            CommandArgument='<%# Eval("BlobName") %>'
+                                            OnCommand="add_Command"
+                                            Style="float: right"
+                                            runat="server">
                                         <span class="glyphicon glyphicon-floppy-save"></span>
-                                        <span>Save To Gallery</span>
-                                    </asp:LinkButton>
-                                    <asp:LinkButton ID="ban" Style="float: right" runat="server">
+                                        </asp:LinkButton>
+                                        <asp:LinkButton ID="ban" Style="float: right" runat="server">
                                         <span aria-hidden="true" class="glyphicon glyphicon-ban-circle"></span>
-                                    </asp:LinkButton>
-                                    <div class="text-center"><%# Eval("Text") %></div>
-
-                                    <asp:ImageButton ID="img" ImageUrl='<%# Eval("PicUrl")%>' CssClass="itemImage" Style="float: right" runat="server" />
-                                    <%--   <asp:Label ID="labelValue1" runat="server" Text=""></asp:Label> --%>
+                                        </asp:LinkButton>
+                                    </div>
+                                    <a target="_blank" href='<%# Eval("PicUrl")%>'>
+                                        <div class="item-image" style="background-image: url('<%# Eval("PicUrl")%>');"></div>
+                                    </a>
+                                    <div style="color: #383838; font-weight: bold;" class="text-center"><%# Eval("Text") %></div>
                                 </div>
                             </div>
                         </ItemTemplate>
