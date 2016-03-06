@@ -66,6 +66,26 @@
             width: auto;
         }
 
+        .flex-item {
+            margin: 10px 40px 30px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .item-image {
+            width: 200px;
+            height: 150px;
+            background-size: cover;
+            border-radius: 5px;
+        }
+
+        .item-title {
+            color: #383838;
+            font-weight: bold;
+        }
+
         /*.item {
             width: 20em;
             height: 20em;
@@ -168,7 +188,7 @@
                 <LayoutTemplate>
                     <div class="row">
                         <div class="col-sm-12">
-                            <div class="flex-container" style="display: flex;">
+                            <div class="flex-container">
                                 <asp:PlaceHolder ID="itemPlaceholder" runat="server" />
                             </div>
                         </div>
@@ -178,7 +198,7 @@
                     <h4 class="text-center" style="color: #e1eef6;">no images to show</h4>
                 </EmptyDataTemplate>
                 <ItemTemplate>
-                    <div class="flex-item" style="margin: 10px; padding: 20px; background-color: white; border-radius: 10px; display: inline-block;">
+                    <div class="flex-item">
 
                         <div class="item-wrapper">
                             <asp:LinkButton ID="deleteBlob"
@@ -188,12 +208,15 @@
                                 Style="float: right"
                                 runat="server" Text="<span class='glyphicon glyphicon-trash'></span>" OnCommand="OnDeleteImage" />
                             <br />
-                            <asp:ImageButton ID="img" ImageUrl='<%# Eval("Uri")%>' CssClass="itemImage" runat="server" />
-                            <%--<img src="<%# Eval("Uri") %>" alt="<%# Eval("Uri") %>"  style="margin-left: 4em" />--%>
+                            <a target="_blank" href='<%# Eval("Uri")%>'>
+                                <div class="item-image" style="background-image: url('<%# Eval("Uri")%>');"></div>
+                            </a>
                             <asp:Repeater ID="blobMetadata" runat="server">
                                 <ItemTemplate>
-                                    <div class="text-center"><%# Eval("Text") %><span><%# Eval("Rating") %></span></div>
-
+                                    <div class="text-center">
+                                        <div class="item-title"><%# Eval("Text") %></div>
+                                        <div class="item-rating"><%# Eval("Rating") %></div>
+                                    </div>
                                 </ItemTemplate>
                             </asp:Repeater>
 
