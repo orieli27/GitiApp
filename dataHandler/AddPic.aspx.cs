@@ -22,7 +22,7 @@ namespace dataHandler
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-           
+
             try
             {
                 if (!IsPostBack)
@@ -83,7 +83,7 @@ namespace dataHandler
 
 
                     //insert to the table
-                    
+
                     this.SaveImage(
                     blob_id,
                     NameBox.Text,
@@ -93,7 +93,7 @@ namespace dataHandler
                     FileUp.PostedFile.InputStream,
                     Context.User.Identity.GetUserName(),
                     rd_check.Checked
-                    
+
                     );
                     //saves word-blob index partition key is word text and row key is the blob id
                     CloudTable wordTable = getTable("Word");
@@ -117,7 +117,7 @@ namespace dataHandler
             else
                 status.Text = "No image file";
         }
-        protected void saveUserBlob(CloudTable t,UserEntity u )
+        protected void saveUserBlob(CloudTable t, UserEntity u)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace dataHandler
 
         }
 
-        private void SaveImage(string id, string name, string mCat, string secondery, string contentType, Stream fiileStream, string owner,bool check)//, string catid, string lang, string owner, string contentType)
+        private void SaveImage(string id, string name, string mCat, string secondery, string contentType, Stream fiileStream, string owner, bool check)//, string catid, string lang, string owner, string contentType)
         {
             // Create a blob in container and upload image bytes to it
             var blob = this.GetContainer("pic").GetBlockBlobReference(id);
@@ -169,17 +169,17 @@ namespace dataHandler
             blob.Metadata.Add("Owner", String.IsNullOrEmpty(owner) ? " ? " : owner);
             blob.UploadFromStream(fiileStream);
             blob.SetMetadata();
-            if(check)
-            //send to queue 
-            sendToQueue(id);
+            if (check)
+                //send to queue 
+                sendToQueue(id);
         }
         protected void sendToQueue(string id)
         {
-             var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("AzureData"));
+            var account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("AzureData"));
             CloudQueueClient queueClient = account.CreateCloudQueueClient();
             CloudQueue messageQueue = queueClient.GetQueueReference("urlqueue");
             messageQueue.CreateIfNotExists();
-          
+
             // Create a message and add it to the queue.
             CloudQueueMessage message = new CloudQueueMessage(id);//GetContainer("pic").GetBlockBlobReference(id).Uri.ToString());
             messageQueue.AddMessage(message);
@@ -220,11 +220,11 @@ namespace dataHandler
                                    + ex.Message;
             }
         }
-        
-        
-        
-        
-        
+
+
+
+
+
         /// <summary>
         /// Cast out blob instance and bind it's metadata to metadata repeater
         /// </summary>
@@ -247,7 +247,7 @@ namespace dataHandler
                         {
                             Text = blob.Metadata["Text"],
                             Rating = blob.Metadata["Rating"],
-                            Uri=blob.Uri
+                            Uri = blob.Uri
                         });
 
                         //bind to metadata
@@ -280,55 +280,28 @@ namespace dataHandler
                     CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
 
                     // Create the CloudTable that represents the "word" table.
-                    CloudTable table = tableClient.GetTableReference("Word");
+                    CloudTable table = tableClient.GetTableReference("UserBlobs");
                     string a = blob.Metadata["Text"].ToString();
-                    string b = blob.Metadata["Id"].ToString();
-                    string sub = blob.Metadata["SubCat"].ToString();
+                    string b = blob.Name.ToString();
+                    
+                    //string sub = blob.Metadata["SubCat"].ToString();
                     string owner = Context.User.Identity.GetUserName();
 
-                    // Create a retrieve operation that expects a customer entity.
-                   // TableOperation retrieveOperation = TableOperation.Retrieve<WordEntity>(a, b);
-
-                   // // Execute the operation.
-                   // TableResult retrievedResult = table.Execute(retrieveOperation);
-                   // WordEntity deleteEntity = (WordEntity)retrievedResult.Result;
-                   // // Create the Delete TableOperation.
-                   // if (deleteEntity != null)
-                   // {
-                   //     TableOperation deleteOperation = TableOperation.Delete(deleteEntity);
-                   //     // Execute the operation.
-                   //     table.Execute(deleteOperation);
-                   // }
-
-                   // // Create a retrieve operation that expects a customer entity.
-                   // TableOperation retrieveOperation1 = TableOperation.Retrieve<SubCatEntity>(sub, a);
-
-                   // // Execute the operation.
-                   // TableResult retrievedResult1 = table.Execute(retrieveOperation1);
-                   //SubCatEntity deleteEntity1 = (SubCatEntity)retrievedResult1.Result;
-                   // // Create the Delete TableOperation.
-                   // if (deleteEntity1 != null)
-                   // {
-                   //     TableOperation deleteOperation1 = TableOperation.Delete(deleteEntity1);
-                   //     // Execute the operation.
-                   //     table.Execute(deleteOperation1);
-                   // }
-
-                   // // Create a retrieve operation that expects a customer entity.
+                    // // Create a retrieve operation that expects a customer entity.
                     TableOperation retrieveOperation2 = TableOperation.Retrieve<UserEntity>(owner, b);
 
-                   // // Execute the operation.
-                    TableResult retrievedResult2 = table.Execute(retrieveOperation2);
-                    UserEntity deleteEntity2 = (UserEntity)retrievedResult2.Result;
+                    // // Execute the operation.
+                    TableResult fetchedRow = table.Execute(retrieveOperation2);
+                    UserEntity toDelete = (UserEntity)fetchedRow.Result;
                     // Create the Delete TableOperation.
-                    if (deleteEntity2 != null)
+                    if (toDelete != null)
                     {
-                        TableOperation deleteOperation2 = TableOperation.Delete(deleteEntity2);
+                        TableOperation deleteOperation2 = TableOperation.Delete(toDelete);
                         // Execute the operation.
                         table.Execute(deleteOperation2);
                     }
-                   // bool result = blob.DeleteIfExists();
-                    status.Text = "";
+                    // bool result = blob.DeleteIfExists();
+                    // status.Text = "";
                 }
             }
             catch (StorageException se)
@@ -338,7 +311,7 @@ namespace dataHandler
             catch (Exception) { }
             RefreshGallery();
         }
-        protected void delRow(CloudTable t,string p_key, string R_key)
+        protected void delRow(CloudTable t, string p_key, string R_key)
         {
 
 
@@ -387,7 +360,7 @@ namespace dataHandler
 
             // Construct the query operation for all customer entities where PartitionKey="Smith".
             TableQuery<UserEntity> query = new TableQuery<UserEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Context.User.Identity.GetUserName()));
-          
+
 
 
             // Print the fields for each customer.
@@ -399,19 +372,19 @@ namespace dataHandler
                     blob.FetchAttributes();
                     d.Add(blob);
                 }
-                
+
             }
             list.DataSource = d;
             list.DataBind();
             // RefreshGallery(NameBox.Text.ToString());
-           // status.Text = "Total Number of images with the name-" + NameBox.Text.ToString() + ",is[" + i + "].";
+            // status.Text = "Total Number of images with the name-" + NameBox.Text.ToString() + ",is[" + i + "].";
             //list.DataSource =
-          // this.GetContainer("pic").ListBlobs(null, true, BlobListingDetails.All, new BlobRequestOptions(), null);
+            // this.GetContainer("pic").ListBlobs(null, true, BlobListingDetails.All, new BlobRequestOptions(), null);
             //list.DataBind();
 
         }
 
-     
+
 
         private void CreateBlobRating(CloudTable t, RankEntity rate)
         {

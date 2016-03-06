@@ -216,7 +216,7 @@ namespace dataHandler
             list.DataSource = d;
             list.DataBind();
             // RefreshGallery(NameBox.Text.ToString());
-            status.Text = "Total Number of images with the name-" + NameBox.Text.ToString() + ",is[" + i + "].";
+            //status.Text = "Total Number of images with the name-" + NameBox.Text.ToString() + ",is[" + i + "].";
         }
 
         protected void Rate()
@@ -303,8 +303,7 @@ namespace dataHandler
             }
             catch (DataServiceRequestException ex)
             {
-                status.Text = "Unable to connect to the table storage server. Please check that the service is running.<br>"
-                                   + ex.Message;
+                //status.Text = "Unable to connect to the table storage server. Please check that the service is running.<br>" + ex.Message;
             }
             string f= null;
         }

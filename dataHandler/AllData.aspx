@@ -3,10 +3,11 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <style type="text/css">
-        img, .itemImage {
-            width: 10em;
-            height: 10em;
+        .itemImage {
+            width: 200px;
+            height: 200px;
         }
+
         .rating {
             width: 3em;
             height: 3em;
@@ -14,16 +15,19 @@
             background-repeat: no-repeat;
             display: block;
         }
-        .emptyStar{
-            background-image:url("images/rating/ratingStarEmpty.png");
-                  }
-        .fullStar{
-            background-image:url("images/rating/ratingStarFilled.png");
-                  }
-        .thinkStar{
-            background-image:url("images/rating/ratingStarSaved.png");
-                  }
-    
+
+        .emptyStar {
+            background-image: url("images/rating/ratingStarEmpty.png");
+        }
+
+        .fullStar {
+            background-image: url("images/rating/ratingStarFilled.png");
+        }
+
+        .thinkStar {
+            background-image: url("images/rating/ratingStarSaved.png");
+        }
+
         .myButton {
             -moz-box-shadow: inset 0px 0px 15px 3px #23395e;
             -webkit-box-shadow: inset 0px 0px 15px 3px #23395e;
@@ -88,88 +92,113 @@
                 background-color: #00ffff;
             }
 
-        span {
+        /*span {
             padding: 2em;
             text-align: center;
-        }
+        }*/
     </style>
-    <asp:Panel ID="Panel1" BackImageUrl="~/Content/back.jpeg" runat="server">
-        <br />
-        <br />
-        <asp:Label ID="Name" runat="server" Text="Please Enter Picture Name:"></asp:Label>
-        <br />
-        <asp:TextBox ID="NameBox" CssClass="form-control" runat="server"></asp:TextBox>
-        <asp:Button ID="SearchB" runat="server" Text="Search" OnClick="SearchB_Click" CssClass="btn btn-success btn-lg" />
-        <br />
-        <br />
-        <asp:Label ID="Category" runat="server" CssClass="drop form-control" Text="OR Select Category:"></asp:Label>
-        <br />
-        <asp:DropDownList ID="mainCategory"
-            AutoPostBack="True"
-            CssClass="drop"
-            OnSelectedIndexChanged="mainCategory_SelectedIndexChanged"
-            runat="server">
-
-            <asp:ListItem Value="Food"> Food </asp:ListItem>
-            <asp:ListItem Value="Transportation"> Transportation </asp:ListItem>
-            <asp:ListItem Value="Animales"> Animales </asp:ListItem>
-            <asp:ListItem Value="Feelings"> Feelings </asp:ListItem>
-            <asp:ListItem Selected="True" Value="General"> General </asp:ListItem>
-
-        </asp:DropDownList>
-        <br />
-        <br />
-        <asp:DropDownList ID="secondery" OnLoad="secondery_SelectedIndexChanged1"  AutoPostBack="True" CssClass="drop form-control" runat="server"></asp:DropDownList>
-        <br />
-
-        <asp:Image ID="Image1" runat="server" Height="97px" Width="118px" />
-        <br />
-        <br />
-
-        <br />
-        <asp:Label ID="status" runat="server"></asp:Label>
-        <br />
-        <br />
-    </asp:Panel>
 
 
-    <asp:ListView ID="list" runat="server" OnItemDeleting="OnListItemDeleting"
-        OnItemDataBound="OnBlobDataBound">
-        <LayoutTemplate>
-            <div class="row">
-                <asp:PlaceHolder ID="itemPlaceholder" runat="server" />
-            </div>
-        </LayoutTemplate>
-        <EmptyDataTemplate>
-            <h2>No Items where found matching your cratiria</h2>
-        </EmptyDataTemplate>
-        <ItemTemplate>
-            <div style="display: inline-block">
 
-                <div class="item">   
-                   
-                    <br />
+    <div class="container-fluid" style="background-color: #d9e1e8; padding: 72px 0;">
+        <div class="container">
+            <h2>Browse all images</h2>
 
-                    <asp:LinkButton ID="add" Style="float: right" runat="server" OnCommand="add_Command" CommandArgument='<%# Eval("BlobName") %>'>
-                         <span aria-hidden="true"  class="glyphicon glyphicon-floppy-save"></span>
-                    </asp:LinkButton>
-                    <asp:LinkButton ID="ban" Style="float: right" runat="server" >
-                         <span aria-hidden="true" class="glyphicon glyphicon-ban-circle"></span>
-                    </asp:LinkButton>
-                    <h3><%# Eval("Text") %></h3>
+            <asp:Panel ID="Panel1" BackImageUrl="~/Content/back.jpeg" runat="server">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="form-group">
+                            <label id="Name">Please Enter Picture Name:</label>
+                            <asp:TextBox ID="NameBox" CssClass="form-control input-lg" runat="server"></asp:TextBox>
+                        </div>
+                        <div class="form-group">
+                            <asp:Button ID="SearchB" runat="server" Text="Search" OnClick="SearchB_Click" CssClass="btn btn-success btn-lg" />
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="form-group">
+                            <label><i>OR</i> Select category</label>
+                        </div>
+                        <div class="form-group">
+                            <asp:DropDownList ID="mainCategory"
+                                AutoPostBack="True"
+                                CssClass="drop form-control input-lg"
+                                OnSelectedIndexChanged="mainCategory_SelectedIndexChanged"
+                                runat="server">
 
-                    <asp:ImageButton ID="img" ImageUrl='<%# Eval("PicUrl")%>' CssClass="itemImage" Style="float:right" runat="server" />
-                <%--   <asp:Label ID="labelValue1" runat="server" Text=""></asp:Label> --%> 
-                   
-                  
-                  
+                                <asp:ListItem Value="Food"> Food </asp:ListItem>
+                                <asp:ListItem Value="Transportation"> Transportation </asp:ListItem>
+                                <asp:ListItem Value="Animales"> Animales </asp:ListItem>
+                                <asp:ListItem Value="Feelings"> Feelings </asp:ListItem>
+                                <asp:ListItem Selected="True" Value="General"> General </asp:ListItem>
+
+                            </asp:DropDownList>
+                        </div>
+                        <div class="form-group">
+                            <asp:DropDownList ID="secondery" OnSelectedIndexChanged
+                                ="secondery_SelectedIndexChanged1" AutoPostBack="True" CssClass="drop form-control" runat="server"></asp:DropDownList>
+                        </div>
+                    </div>
+                </div>
+
+                <%--<asp:Image ID="Image1" runat="server" Height="97px" Width="118px" />
+                <br />
+                <br />
+
+                <br />
+                <asp:Label ID="status" runat="server"></asp:Label>
+                <br />
+                <br />--%>
+            </asp:Panel>
+
+        </div>
+    </div>
+
+
+    <div class="container-fluid" style="background-color: #004e66; padding: 72px 0;">
+        <div class="container">
+            <h2 style="color: #e1eef6;">Gallery</h2>
+
+            <div>
+                <div>
+                    <asp:ListView ID="list" runat="server" OnItemDeleting="OnListItemDeleting"
+                        OnItemDataBound="OnBlobDataBound">
+                        <LayoutTemplate>
+                            <div>
+                                <asp:PlaceHolder ID="itemPlaceholder" runat="server" />
+                            </div>
+                        </LayoutTemplate>
+                        <EmptyDataTemplate>
+                            <h4 style="color: #e1eef6;">No Items where found matching your cratiria</h4>
+                        </EmptyDataTemplate>
+                        <ItemTemplate>
+                            <div class="flex-item" style="margin: 10px; padding: 20px; background-color: white; border-radius: 10px; display: inline-block;">
+                                <div class="item-wrapper">
+                                    <asp:LinkButton ID="SaveToGallery"
+                                        OnClientClick="return confirm('Add image to your gallery?');"
+                                        CommandName="AddToGallery"
+                                        CommandArgument='<%# Eval("BlobName") %>'
+                                        OnCommand="add_Command"
+                                        Style="float: right"
+                                        runat="server">
+                                        <span class="glyphicon glyphicon-floppy-save"></span>
+                                        <span>Save To Gallery</span>
+                                    </asp:LinkButton>
+                                    <asp:LinkButton ID="ban" Style="float: right" runat="server">
+                                        <span aria-hidden="true" class="glyphicon glyphicon-ban-circle"></span>
+                                    </asp:LinkButton>
+                                    <div class="text-center"><%# Eval("Text") %></div>
+
+                                    <asp:ImageButton ID="img" ImageUrl='<%# Eval("PicUrl")%>' CssClass="itemImage" Style="float: right" runat="server" />
+                                    <%--   <asp:Label ID="labelValue1" runat="server" Text=""></asp:Label> --%>
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </asp:ListView>
                 </div>
             </div>
-        </ItemTemplate>
-    </asp:ListView>
-
-
-
+        </div>
+    </div>
 
 
 

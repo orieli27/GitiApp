@@ -22,15 +22,6 @@ namespace dataHandler {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// Name control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Name;
-        
-        /// <summary>
         /// NameBox control.
         /// </summary>
         /// <remarks>
@@ -49,15 +40,6 @@ namespace dataHandler {
         protected global::System.Web.UI.WebControls.Button SearchB;
         
         /// <summary>
-        /// Category control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Category;
-        
-        /// <summary>
         /// mainCategory control.
         /// </summary>
         /// <remarks>
@@ -74,24 +56,6 @@ namespace dataHandler {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList secondery;
-        
-        /// <summary>
-        /// Image1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image Image1;
-        
-        /// <summary>
-        /// status control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label status;
         
         /// <summary>
         /// list control.
