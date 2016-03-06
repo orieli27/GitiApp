@@ -29,21 +29,28 @@ namespace WorkerRole1
         {
             Trace.TraceInformation("WorkerRole1 is running");
 
-            try
+
+
+            while (true)
             {
-                this.EnsureContainerExists();
-                this.RunAsync(this.cancellationTokenSource.Token).Wait();
+                Thread.Sleep(10000);
+                TestTaggingTagging1();
             }
-            finally
-            {
-                this.runCompleteEvent.Set();
-            }
+            //try
+            //{
+            //    this.EnsureContainerExists();
+            //    this.RunAsync(this.cancellationTokenSource.Token).Wait();
+            //}
+            //finally
+            //{
+            //    this.runCompleteEvent.Set();
+            //}
         }
 
         public override bool OnStart()
         {
             // Set the maximum number of concurrent connections
-            ServicePointManager.DefaultConnectionLimit = 3;
+            ServicePointManager.DefaultConnectionLimit = 12;
 
             // For information on handling configuration changes
             // see the MSDN topic at http://go.microsoft.com/fwlink/?LinkId=166357.
@@ -109,7 +116,7 @@ namespace WorkerRole1
             CloudQueueClient queueClient = account.CreateCloudQueueClient();
             CloudQueue messageQueue = queueClient.GetQueueReference("urlqueue");
             messageQueue.CreateIfNotExists();
-           messageQueue.FetchAttributesAsync ();
+           messageQueue.FetchAttributes ();
 
             // Retrieve the cached approximate message count.
             int? cachedMessageCount = messageQueue.ApproximateMessageCount;
@@ -159,7 +166,7 @@ namespace WorkerRole1
             //else
             //    this.runCompleteEvent.Set();
           Task.Delay(1000);
-          this.cancellationTokenSource.Cancel();
+          //this.cancellationTokenSource.Cancel();
         }
         private void EnsureContainerExists()
         {

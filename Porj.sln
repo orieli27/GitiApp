@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dataHandler", "dataHandler\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerRole1", "WorkerRole1\WorkerRole1.csproj", "{202B812B-6B39-44D1-ABF8-92447AF6ABA6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resizer", "Resizer\Resizer.csproj", "{A9097AD0-BF70-4D39-BE73-4590D0BBD410}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{202B812B-6B39-44D1-ABF8-92447AF6ABA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{202B812B-6B39-44D1-ABF8-92447AF6ABA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{202B812B-6B39-44D1-ABF8-92447AF6ABA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9097AD0-BF70-4D39-BE73-4590D0BBD410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9097AD0-BF70-4D39-BE73-4590D0BBD410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9097AD0-BF70-4D39-BE73-4590D0BBD410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9097AD0-BF70-4D39-BE73-4590D0BBD410}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
