@@ -17,10 +17,4 @@
       <Setting name="ContainerName" value="gallery" />
     </ConfigurationSettings>
   </Role>
-  <Role name="Resizer">
-    <Instances count="1" />
-    <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
-    </ConfigurationSettings>
-  </Role>
 </ServiceConfiguration>

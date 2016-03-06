@@ -147,6 +147,7 @@ namespace WorkerRole1
                         if (response != null)
                         {
                             blob.Metadata["Tag"] = response.Results[0].Categories[0].Name;
+                            blob.SetMetadata();
                             // Console.WriteLine(response);
                         }
                     }

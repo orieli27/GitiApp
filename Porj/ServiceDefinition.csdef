@@ -25,9 +25,4 @@
       <Setting name="ContainerName" />
     </ConfigurationSettings>
   </WorkerRole>
-  <WorkerRole name="Resizer" vmsize="Small">
-    <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
-    </ConfigurationSettings>
-  </WorkerRole>
 </ServiceDefinition>

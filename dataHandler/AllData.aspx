@@ -196,23 +196,36 @@
                             <div class="flex-item">
                                 <div class="item-wrapper">
                                     <div>
-                                        <asp:LinkButton ID="SaveToGallery"
-                                            OnClientClick="return confirm('Add image to your gallery?');"
-                                            CommandName="AddToGallery"
-                                            CommandArgument='<%# Eval("BlobName") %>'
-                                            OnCommand="add_Command"
-                                            Style="float: right"
-                                            runat="server">
-                                        <span class="glyphicon glyphicon-floppy-save"></span>
-                                        </asp:LinkButton>
-                                        <asp:LinkButton ID="ban" Style="float: right" runat="server">
+                                        <div class="item-actions" style="text-align: right;">
+                                            <div class="item-action" style="display: inline-block; padding: 5px;">
+                                                <asp:LinkButton ID="SaveToGallery"
+                                                    OnClientClick="return confirm('Add image to your gallery?');"
+                                                    CommandName="AddToGallery"
+                                                    CommandArgument='<%# Eval("BlobName") %>'
+                                                    OnCommand="add_Command"
+                                                    runat="server">
+                                            <span class="glyphicon glyphicon-floppy-save"></span>
+                                                </asp:LinkButton>
+                                            </div>
+                                            <div class="item-action" style="display: inline-block; padding: 5px;">
+                                                <asp:LinkButton ID="ban" runat="server">
                                         <span aria-hidden="true" class="glyphicon glyphicon-ban-circle"></span>
-                                        </asp:LinkButton>
+                                                </asp:LinkButton>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <a target="_blank" href='<%# Eval("PicUrl")%>'>
-                                        <div class="item-image" style="background-image: url('<%# Eval("PicUrl")%>');"></div>
-                                    </a>
-                                    <div style="color: #383838; font-weight: bold;" class="text-center"><%# Eval("Text") %></div>
+                                    <div>
+                                        <a target="_blank" href='<%# Eval("PicUrl")%>'>
+                                            <div class="item-image" style="background-image: url('<%# Eval("PicUrl")%>');"></div>
+                                        </a>
+                                    </div>
+                                    <div class="image-data" style="margin-top: 5px;">
+                                        <span style="display: inline-block; color: #383838; font-weight: bold;" class="text-center"><%# Eval("Text") %></span>
+                                        &nbsp;
+                                        <asp:LinkButton runat="server">#<%# Eval("ImageTag1") %></asp:LinkButton>
+                                        &nbsp;
+                                        <asp:LinkButton runat="server">#<%# Eval("ImageTag2") %></asp:LinkButton>
+                                    </div>
                                 </div>
                             </div>
                         </ItemTemplate>

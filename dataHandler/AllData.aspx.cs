@@ -208,8 +208,11 @@ namespace dataHandler
                     PicUrl = getUrl(entity.RowKey),
                     BlobName = getName(entity.RowKey),
                     Rating = getRating(entity.RowKey),
-                    Text = NameBox.Text.ToString()
+                    Text = NameBox.Text.ToString(),
+                    ImageTag1 = getImageTags(entity.RowKey).Split(' ')[0],
+                    ImageTag2 = getImageTags(entity.RowKey).Split(' ')[1]
                 });
+
                 Console.WriteLine("{0}, {1}", entity.PartitionKey, entity.RowKey);
                 i++;
             }
@@ -237,6 +240,14 @@ namespace dataHandler
             CloudBlockBlob b = GetContainer("pic").GetBlockBlobReference(blob);
             b.FetchAttributes();
             return b.Metadata["Rating"];
+
+        }
+
+        public string getImageTags(string blob)
+        {
+            CloudBlockBlob b = GetContainer("pic").GetBlockBlobReference(blob);
+            b.FetchAttributes();
+            return b.Metadata["Tag"];
 
         }
 
@@ -327,6 +338,11 @@ namespace dataHandler
         public string Rating { get; set; }
 
         public string BlobName { get; set; }
+
+        public string ImageTag1 { get; set; }
+
+        public string ImageTag2 { get; set; }
+
 
     }
 }
