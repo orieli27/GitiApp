@@ -1,17 +1,17 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AddPic.aspx.cs" Inherits="dataHandler.AddPic" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-      <meta http-equiv="X-UA-Compatible" content="IE=7" />
-   <script >
-       function playclip() {
-           var audio = document.getElementsByTagName("audio");
-           audio.play();
-       }
-</script>
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <script>
+        function playclip() {
+            var audio = document.getElementsByTagName("audio");
+            audio.play();
+        }
+    </script>
     <style type="text/css">
-        img, .itemImage {
-            width: 10em;
-            height: 10em;
+        .itemImage {
+            width: 200px;
+            height: 200px;
         }
 
         .myButton {
@@ -66,110 +66,146 @@
             width: auto;
         }
 
-        .item {
+        /*.item {
             width: 20em;
             height: 20em;
             font-size: smaller;
             font-weight: bold;
             border: double;
-        }
+        }*/
 
-            .item div {
-                background-color: #00ffff;
-            }
+        /*.item div {
+            background-color: #00ffff;
+        }*/
 
-        span {
+        /*span {
             padding: 2em;
             text-align: center;
-        }
+        }*/
     </style>
 
-    <asp:Panel ID="Panel1" BackImageUrl="~/Content/back.jpeg" runat="server">
-        <br /><span id="dummy">
+    <div class="container-fluid" style="background-color: #d9e1e8; padding: 72px 0;">
+        <div class="container">
+            <asp:Panel ID="Panel1" BackImageUrl="~/Content/back.jpeg" runat="server">
+                <h2>Welcome! Please Create your Word Or import From Gallery</h2>
 
-                              </span>
-        <br />
-        <!--<asp:Label ID="Name" runat="server" Text="Please Enter Picture Name:"></asp:Label>-->
-        <div class="form-group">
-            <label>Image Title</label>
-            <asp:TextBox ID="NameBox" CssClass="form-control" runat="server"></asp:TextBox>
-        </div>
-        <div class="form-group">
-            <label>Main Category</label>
-            <asp:DropDownList ID="mainCategory"
-                AutoPostBack="True"
-                CssClass="drop form-control"
-                OnSelectedIndexChanged="mainCategory_SelectedIndexChanged"
-                runat="server">
-
-                <asp:ListItem Value="Food"> Food </asp:ListItem>
-                <asp:ListItem Value="Transportation"> Transportation </asp:ListItem>
-                <asp:ListItem Value="Animales"> Animales </asp:ListItem>
-                <asp:ListItem Value="Feelings"> Feelings </asp:ListItem>
-                <asp:ListItem Selected="True" Value="General"> General </asp:ListItem>
-
-            </asp:DropDownList>
-        </div>
-        <div class="form-group">
-            <label>Sub-Category</label>
-            <asp:DropDownList ID="secondery" CssClass="drop" runat="server"></asp:DropDownList>
-        </div>
-        <div class="form-group">
-            <label>Image File</label>
-            <asp:FileUpload ID="FileUp" runat="server" />   
-        </div>
-        <div class="form-group">
-            <label>Sound File</label>
-            <asp:FileUpload ID="FileUp1" runat="server" />
-        </div>
-        <div class="form-group">
-         <input type="checkbox" id="rd_check" data-style="btn-group-justified" runat="server">
-    </div>
-        <%--<asp:Button ID="UploagSnd" runat="server" Text="Upload Sound" OnClick="UploagSnd_Click" CssClass="myButton" />--%>
-        <br />       
-        <asp:Button ID="UploadImg" runat="server" Text="Upload Image" OnClick="Upload_Click" CssClass="btn btn-success btn-lg" />
-
-        <asp:Label ID="status" runat="server"></asp:Label>
-
-        <br />
-        <br />
-    </asp:Panel>
-    <asp:ListView ID="list" runat="server" OnItemDeleting="OnListItemDeleting"
-        OnItemDataBound="OnBlobDataBound">
-        <LayoutTemplate>
-            <div class="row">
-                <asp:PlaceHolder ID="itemPlaceholder" runat="server" />
-            </div>
-        </LayoutTemplate>
-        <EmptyDataTemplate>
-            <h2>Welcome Please Create your Word Or import From Gallery</h2>
-        </EmptyDataTemplate>
-        <ItemTemplate>
-            <div style="display:inline-block">
-    
-                <div class="item">
-                   <asp:LinkButton ID="deleteBlob"
-                        OnClientClick="return confirm('Delete image?');"
-                        CommandName="Delete"
-                        CommandArgument='<%# Eval("Name")%>'
-                        style="float:right"
-                        runat="server" Text="<span class='glyphicon glyphicon-trash'></span>" OnCommand="OnDeleteImage" />
-                    <br />    
-                    <asp:ImageButton  id=img ImageUrl='<%# Eval("Uri")%>' CssClass="itemImage" runat="server" />
-                    <%--<img src="<%# Eval("Uri") %>" alt="<%# Eval("Uri") %>"  style="margin-left: 4em" />--%>
-                    <asp:Repeater ID="blobMetadata" runat="server">
-                    <ItemTemplate>
-                      <li><%# Eval("Text") %><span><%# Eval("Rating") %></span></li> 
-                        
-                         </ItemTemplate>
-                    </asp:Repeater>
-                   
-                    
-
+                <!--<asp:Label ID="Name" runat="server" Text="Please Enter Picture Name:"></asp:Label>-->
+                <div class="form-group">
+                    <label>Image Title</label>
+                    <asp:TextBox ID="NameBox" CssClass="form-control input-lg" runat="server"></asp:TextBox>
                 </div>
-            </div>
-        </ItemTemplate>
-    </asp:ListView>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="form-group">
+                            <label>Main Category</label>
+                            <asp:DropDownList ID="mainCategory"
+                                AutoPostBack="True"
+                                CssClass="drop form-control input-lg"
+                                Style="min-width: 250px;"
+                                OnSelectedIndexChanged="mainCategory_SelectedIndexChanged"
+                                runat="server">
+
+                                <asp:ListItem Value="Food"> Food </asp:ListItem>
+                                <asp:ListItem Value="Transportation"> Transportation </asp:ListItem>
+                                <asp:ListItem Value="Animales"> Animales </asp:ListItem>
+                                <asp:ListItem Value="Feelings"> Feelings </asp:ListItem>
+                                <asp:ListItem Selected="True" Value="General"> General </asp:ListItem>
+
+                            </asp:DropDownList>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="form-group">
+                            <label>Sub-Category</label>
+                            <asp:DropDownList ID="secondery" CssClass="drop form-control input-lg" Style="min-width: 250px;" runat="server"></asp:DropDownList>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="form-group">
+                            <label>Image File</label>
+                            <asp:FileUpload ID="FileUp" runat="server" />
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="form-group">
+                            <label>Sound File</label>
+                            <asp:FileUpload ID="FileUp1" runat="server" />
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="rd_check" data-style="btn-group-justified" runat="server">
+                                    <span>Public</span>
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <%--<asp:Button ID="UploagSnd" runat="server" Text="Upload Sound" OnClick="UploagSnd_Click" CssClass="myButton" />--%>
+                <br />
+                <asp:Button ID="UploadImg" runat="server" Text="Upload Image" OnClick="Upload_Click" CssClass="btn btn-success btn-lg" />
+
+                <asp:Label ID="status" runat="server"></asp:Label>
+
+                <br />
+                <br />
+            </asp:Panel>
+
+        </div>
+    </div>
+    <div class="container-fluid" style="background-color: #004e66; padding: 72px 0;">
+        <div class="container">
+            <h2 style="color: #e1eef6">Your Gallery</h2>
+            <asp:ListView ID="list" runat="server" OnItemDeleting="OnListItemDeleting"
+                OnItemDataBound="OnBlobDataBound">
+                <LayoutTemplate>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="flex-container" style="display: flex;">
+                                <asp:PlaceHolder ID="itemPlaceholder" runat="server" />
+                            </div>
+                        </div>
+                    </div>
+                </LayoutTemplate>
+                <EmptyDataTemplate>
+                    <h4 class="text-center" style="color: #e1eef6;">no images to show</h4>
+                </EmptyDataTemplate>
+                <ItemTemplate>
+                    <div class="flex-item" style="margin: 10px; padding: 20px; background-color: white; border-radius: 10px; display: inline-block;">
+
+                        <div class="item-wrapper">
+                            <asp:LinkButton ID="deleteBlob"
+                                OnClientClick="return confirm('Delete image?');"
+                                CommandName="Delete"
+                                CommandArgument='<%# Eval("Name")%>'
+                                Style="float: right"
+                                runat="server" Text="<span class='glyphicon glyphicon-trash'></span>" OnCommand="OnDeleteImage" />
+                            <br />
+                            <asp:ImageButton ID="img" ImageUrl='<%# Eval("Uri")%>' CssClass="itemImage" runat="server" />
+                            <%--<img src="<%# Eval("Uri") %>" alt="<%# Eval("Uri") %>"  style="margin-left: 4em" />--%>
+                            <asp:Repeater ID="blobMetadata" runat="server">
+                                <ItemTemplate>
+                                    <div class="text-center"><%# Eval("Text") %><span><%# Eval("Rating") %></span></div>
+
+                                </ItemTemplate>
+                            </asp:Repeater>
+
+
+
+                        </div>
+                    </div>
+                </ItemTemplate>
+            </asp:ListView>
+        </div>
+
+    </div>
 
 </asp:Content>
 

@@ -24,7 +24,7 @@ namespace WorkerRole1
     {
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
-        bool items = true;
+       
         public override void Run()
         {
             Trace.TraceInformation("WorkerRole1 is running");
