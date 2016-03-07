@@ -209,6 +209,7 @@ namespace dataHandler
                     BlobName = getName(entity.RowKey),
                     Rating = getRating(entity.RowKey),
                     Text = NameBox.Text.ToString(),
+                    
                     ImageTag1 = getImageTags(entity.RowKey).Split(' ')[0],
                     ImageTag2 = getImageTags(entity.RowKey).Split(' ')[1]
                 });
@@ -247,8 +248,9 @@ namespace dataHandler
         {
             CloudBlockBlob b = GetContainer("pic").GetBlockBlobReference(blob);
             b.FetchAttributes();
-            return b.Metadata["Tag"];
-
+            if (b.Metadata["Tag"] != "NO")
+                return b.Metadata["Tag"];
+            else return "Not Yet";
         }
 
         private CloudBlobContainer GetContainer(String st)

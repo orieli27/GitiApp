@@ -3,7 +3,7 @@
   <Role name="dataHandler">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=gitiaac;AccountKey=3d/C0BxEMfHMO6dxojsaDHtnGdROOUFEXe9TRNZajedM2+lgNXRamx2DUFmB7FnMqN/mPUEDCOL2xJbzRAEZSQ==" />
       <Setting name="Data" value="UseDevelopmentStorage=true" />
       <Setting name="ContainerName" value="gallery" />
       <Setting name="AzureData" value="DefaultEndpointsProtocol=https;AccountName=gitiapp;AccountKey=NlD+Pm7f/TSgzY/F30pSLhKgkCtnA7TPHVqphjiCug1U9TQmAGn3SkrxeEv/KTJ49z9br165QGfDJ76MDpWGkg==" />
@@ -12,7 +12,7 @@
   <Role name="WorkerRole1">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=gitiaac;AccountKey=3d/C0BxEMfHMO6dxojsaDHtnGdROOUFEXe9TRNZajedM2+lgNXRamx2DUFmB7FnMqN/mPUEDCOL2xJbzRAEZSQ==" />
       <Setting name="AzureData" value="DefaultEndpointsProtocol=https;AccountName=gitiapp;AccountKey=NlD+Pm7f/TSgzY/F30pSLhKgkCtnA7TPHVqphjiCug1U9TQmAGn3SkrxeEv/KTJ49z9br165QGfDJ76MDpWGkg==" />
       <Setting name="ContainerName" value="gallery" />
     </ConfigurationSettings>

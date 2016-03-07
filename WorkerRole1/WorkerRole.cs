@@ -33,7 +33,7 @@ namespace WorkerRole1
 
             while (true)
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(100000);
                 TestTaggingTagging1();
             }
             //try

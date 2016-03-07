@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dataHandlerContent\" />
+    <Folder Include="Profiles" />
     <Folder Include="ResizerContent\" />
     <Folder Include="TaggerContent\" />
     <Folder Include="UserRoleContent\" />
@@ -67,6 +68,9 @@
     <DiagnosticsConfiguration Include="TaggerContent\diagnostics.wadcfgx" />
     <DiagnosticsConfiguration Include="UserRoleContent\diagnostics.wadcfgx" />
     <DiagnosticsConfiguration Include="WorkerRole1Content\diagnostics.wadcfgx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PublishProfile Include="Profiles\gitiProduction.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
